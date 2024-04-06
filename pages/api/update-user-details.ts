@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (currentUserRoleResult.rows.length === 0) {
         await client.query('ROLLBACK');
         client.release();
-        return res.status(403).json({ message: 'Current user not found' });
+        return res.status(403).json({ message: 'Access denied - undefined role' });
       }
 
       const currentUserRole = currentUserRoleResult.rows[0].role;
