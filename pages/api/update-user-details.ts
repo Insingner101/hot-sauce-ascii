@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       let newUserId = null;
-      if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+      if (newUserRole === 'FACULTY' || newUserRole === 'HOD' || newUserRole === 'IC') {
         newUserId = uuidv4();
       }
 
@@ -67,11 +67,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         `;
         await client.query(updateIdQuery, [newUserEmail]);
         
-      } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+      } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD' || newUserRole === 'IC') {
         const updateFacultyDetailsQuery = `
-          INSERT INTO faculty_details (id, email_id, role)
-          VALUES ($1, $2, $3)
-          ON CONFLICT (email_id) DO UPDATE SET role = $3, id = $1;
+          INSERT INTO faculty_details (id, email_id, role, faculty_name)
+          VALUES ($1, $2, $3, $4)
+          ON CONFLICT (email_id) DO UPDATE SET role = $3, id = $1, faculty_name = $4;
         `;
         await client.query(updateFacultyDetailsQuery, [newUserId, newUserEmail, newUserRole]);
       }
