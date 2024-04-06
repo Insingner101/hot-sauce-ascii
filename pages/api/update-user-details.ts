@@ -7,17 +7,16 @@ const pool = new Pool({
 });
 
 enum RolePriority {
-    ADMIN = 1,
-    HOD = 2,
-    FACULTY = 3,
-    STUDENT = 4,
-  }
+  ADMIN = 1,
+  HOD = 2,
+  FACULTY = 3,
+  STUDENT = 4,
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-        const { currentUserEmail, newUserEmail, newUserRole } = req.body;
-
+      const { currentUserEmail, newUserEmail, newUserRole } = req.body;
       const client = await pool.connect();
       await client.query('BEGIN');
 
@@ -33,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const currentUserRole = currentUserRoleResult.rows[0].role;
-      const currentUserPriority = RolePriority[currentUserRole]
+      const currentUserPriority = RolePriority[currentUserRole];
       const newUserPriority = RolePriority[newUserRole] || RolePriority.STUDENT;
 
       if (currentUserPriority <= newUserPriority) {
@@ -48,10 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const updateUserDetailsQuery = `
-        INSERT INTO user_details (email_id, role)
-        VALUES ($1, $2)
-        ON CONFLICT (email_id) DO UPDATE SET
-          role = $2,
+        INSERT INTO user_details (email_id, role, id)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (email_id) DO UPDATE SET role = $2, id = $3;
       `;
       await client.query(updateUserDetailsQuery, [newUserEmail, newUserRole, newUserId]);
 
@@ -66,16 +64,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           )
           WHERE ud.email_id = $1;
         `;
-      await client.query(updateIdQuery, [newUserEmail]);
-
-    } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
-        const newFacultyId = uuidv4();
+        await client.query(updateIdQuery, [newUserEmail]);
+        
+      } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
         const updateFacultyDetailsQuery = `
           INSERT INTO faculty_details (id, email_id, role)
           VALUES ($1, $2, $3)
-          ON CONFLICT (email_id) DO UPDATE SET role = $3;
+          ON CONFLICT (email_id) DO UPDATE SET role = $3, id = $1;
         `;
-        await client.query(updateFacultyDetailsQuery, [newFacultyId, newUserEmail, newUserRole]);
+        await client.query(updateFacultyDetailsQuery, [newUserId, newUserEmail, newUserRole]);
       }
 
       await client.query('COMMIT');
