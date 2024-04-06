@@ -1,3 +1,4 @@
+import Layout from "@/components/Layout";
 import { GlobalProvider } from "@/context/GlobalContext";
 import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
@@ -15,7 +16,9 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         <GlobalProvider>
           <div className="w-[100vw] h-[100vh] flex dark:bg-black bg-white">
-            <Component {...pageProps} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </div>
         </GlobalProvider>
       </ThemeProvider>

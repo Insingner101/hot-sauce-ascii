@@ -2,7 +2,10 @@ import { ReactNode, createContext, useContext, useState } from "react";
 
 interface GlobalContextProps {
   loading: boolean;
-  setLoading: (stake: boolean) => void;
+  setLoading: (loading: boolean) => void;
+
+  sidebar: boolean;
+  setSidebar: (sidebar: boolean) => void;
 }
 
 const GlobalContext = createContext<GlobalContextProps | undefined>(undefined);
@@ -13,12 +16,15 @@ interface GlobalProviderProps {
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
 
   return (
     <GlobalContext.Provider
       value={{
         loading,
         setLoading,
+        sidebar,
+        setSidebar
       }}
     >
       {children}

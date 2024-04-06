@@ -7,11 +7,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 export default function formEg() {
   const methods = useForm();
-  const { data, status } = useSession();
-
-  useEffect(() => {
-    console.log(data, status);
-  }, [data, status]);
+  const { data: session, status } = useSession();
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -50,7 +46,10 @@ export default function formEg() {
         </form>
       </FormProvider>
 
-      <DTButton onClick={() => signOut({callbackUrl: '/'})} className="w-[16rem] py-2">
+      <DTButton
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="w-[16rem] py-2"
+      >
         Sign out
       </DTButton>
     </>
