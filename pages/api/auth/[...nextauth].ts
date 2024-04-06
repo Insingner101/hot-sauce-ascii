@@ -1,6 +1,11 @@
 import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { Pool } from "pg";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -28,9 +33,29 @@ export const authOptions: NextAuthOptions = {
       return false;
     },
     async session({ session, token }) {
-      //handle user authority
-      //@ts-ignore
-      session.user.role = "admin";
+      if (session.user && session.user.email) {
+        try {
+          const client = await pool.connect();
+          const result = await client.query(
+            'SELECT role FROM public.user_details WHERE email_id = $1',
+            [session.user.email]
+          );
+          client.release();
+
+          if (result.rows.length > 0) {
+            // @ts-ignore
+            session.user.role = result.rows[0].role;
+            console.log("User role:", result.rows[0].role);
+          } else {
+            // @ts-ignore
+            session.user.role = "default";
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+          // @ts-ignore
+          session.user.role = "default";
+        }
+      }
       return session;
     },
   },
