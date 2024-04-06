@@ -10,6 +10,7 @@ enum RolePriority {
   ADMIN = 1,
   HOD = 2,
   FACULTY = 3,
+  IC = 3,
   STUDENT = 4,
 }
 
