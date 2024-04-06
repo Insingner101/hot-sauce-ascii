@@ -1,22 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
 enum RolePriority {
-    ADMIN = 1,
-    HOD = 2,
-    FACULTY = 3,
-    STUDENT = 4,
-  }
+  ADMIN = 1,
+  HOD = 2,
+  FACULTY = 3,
+  STUDENT = 4,
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-        const { currentUserEmail, newUserEmail, newUserRole } = req.body;
-
+      const { currentUserEmail, newUserEmail, newUserRole } = req.body;
       const client = await pool.connect();
       await client.query('BEGIN');
 
@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const currentUserRole = currentUserRoleResult.rows[0].role;
-      const currentUserPriority = RolePriority[currentUserRole]
+      const currentUserPriority = RolePriority[currentUserRole];
       const newUserPriority = RolePriority[newUserRole] || RolePriority.STUDENT;
 
       if (currentUserPriority <= newUserPriority) {
@@ -41,25 +41,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ message: 'Insufficient permissions to add new user' });
       }
 
-      const updateUserDetailsQuery = `
-        INSERT INTO user_details (email_id, role)
-        VALUES ($1, $2)
-        ON CONFLICT (email_id) DO UPDATE SET
-          role = $2,
-      `;
-      await client.query(updateUserDetailsQuery, [newUserEmail, newUserRole]);
+      let newUserId = null;
+      if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+        newUserId = uuidv4();
+      }
 
-      const updateIdQuery = `
-        UPDATE user_details ud
-        SET id = (
-          SELECT fd.id
-          FROM form_details fd
-          WHERE fd.email_id = ud.email_id
-          LIMIT 1
-        )
-        WHERE ud.email_id = $1;
+      const updateUserDetailsQuery = `
+        INSERT INTO user_details (email_id, role, id)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (email_id) DO UPDATE SET role = $2, id = $3;
       `;
-      await client.query(updateIdQuery, [newUserEmail]);
+      await client.query(updateUserDetailsQuery, [newUserEmail, newUserRole, newUserId]);
+
+      if (newUserRole === 'STUDENT') {
+        const updateIdQuery = `
+          UPDATE user_details ud
+          SET id = (
+            SELECT fd.id
+            FROM form_details fd
+            WHERE fd.email_id = ud.email_id
+            LIMIT 1
+          )
+          WHERE ud.email_id = $1;
+        `;
+        await client.query(updateIdQuery, [newUserEmail]);
+        
+      } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+        const updateFacultyDetailsQuery = `
+          INSERT INTO faculty_details (id, email_id, role)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (email_id) DO UPDATE SET role = $3, id = $1;
+        `;
+        await client.query(updateFacultyDetailsQuery, [newUserId, newUserEmail, newUserRole]);
+      }
 
       await client.query('COMMIT');
       client.release();
