@@ -14,21 +14,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const client = await pool.connect();
-      const query = `
+
+      const courseQuery = `
         SELECT course_title, course_ic, course_type, course_faculties
         FROM course_details
         WHERE course_id = $1;
       `;
-      const values = [course_id as string];
-      const result: QueryResult<any> = await client.query(query, values);
-      client.release();
+      const courseValues = [course_id as string];
+      const courseResult: QueryResult<any> = await client.query(courseQuery, courseValues);
 
-      if (result.rows.length === 0) {
+      if (courseResult.rows.length === 0) {
+        client.release();
         return res.status(404).json({ error: 'Course not found' });
       }
 
-      const { course_title, course_ic, course_type, course_faculties } = result.rows[0];
-      res.status(200).json({ course_title, course_ic, course_type, course_faculties });
+      const { course_title, course_ic, course_type, course_faculties } = courseResult.rows[0];
+
+      const courseFacultiesArray = JSON.parse(course_faculties);
+
+      const facultyQuery = `
+        SELECT faculty_name
+        FROM faculty_details
+        WHERE email_id = ANY($1);
+      `;
+      const facultyValues = [courseFacultiesArray];
+      const facultyResult: QueryResult<any> = await client.query(facultyQuery, facultyValues);
+
+      client.release();
+
+      // Map the faculty names to the course faculties
+      const facultyNames = facultyResult.rows.map((row) => row.faculty_name);
+
+      res.status(200).json({
+        course_title,
+        course_ic,
+        course_type,
+        course_faculties: courseFacultiesArray,
+        faculty_names: facultyNames,
+      });
     } catch (error) {
       console.error('Error fetching course details:', error);
       res.status(500).json({ error: 'Internal Server Error' });
