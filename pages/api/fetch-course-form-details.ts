@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const courseFacultiesArray = JSON.parse(course_faculties);
 
       const facultyQuery = `
-        SELECT faculty_name
+        SELECT email_id, faculty_name
         FROM faculty_details
         WHERE email_id = ANY($1);
       `;
@@ -42,12 +42,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       client.release();
 
-      // Map the faculty names to the course faculties
-      const facultyNames = facultyResult.rows.map((row) => row.faculty_name);
+      const emailToNameMap: { [key: string]: string } = {};
+      facultyResult.rows.forEach((row) => {
+        emailToNameMap[row.email_id] = row.faculty_name;
+      });
+
+      const facultyNames = courseFacultiesArray.map((email: string) => emailToNameMap[email] || '');
+
+      const icName = emailToNameMap[course_ic] || '';
 
       res.status(200).json({
         course_title,
         course_ic,
+        ic: icName,
         course_type,
         course_faculties: courseFacultiesArray,
         faculty_names: facultyNames,
