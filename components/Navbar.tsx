@@ -1,11 +1,9 @@
 import { useGlobalContext } from "@/context/GlobalContext";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { LuMenu } from "react-icons/lu";
 
 export default function Navbar() {
-  const { data: session, status } = useSession();
-  const { sidebar, setSidebar } = useGlobalContext();
+  const { sidebar, setSidebar, user } = useGlobalContext();
 
   return (
     <div className="w-full sm:h-20 bg-white flex items-center py-1 px-2 sm:px-4 justify-between shadow_black border-b-1 border-[#e5e7eb]">
@@ -24,7 +22,7 @@ export default function Navbar() {
       </div>
       <div className="flex items-center cursor-pointer shadow_black_lg rounded-full p-1">
         <Image
-          src={session?.user?.image ?? ""}
+          src={user?.image ?? ""}
           alt="Avatar"
           width={40}
           height={40}

@@ -1,13 +1,12 @@
 import DTButton from "@/components/DTButton";
 import { CustomInput } from "@/components/Input";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 export default function formEg() {
   const methods = useForm();
-  const { data: session, status } = useSession();
 
   const onSubmit = (data: any) => {
     console.log(data);

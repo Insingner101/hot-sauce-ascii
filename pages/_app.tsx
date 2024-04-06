@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import { GlobalProvider } from "@/context/GlobalContext";
 import "@/styles/globals.css";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";

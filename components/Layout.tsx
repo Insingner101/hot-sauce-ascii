@@ -3,7 +3,7 @@ import { ReactNode, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useRouter } from "next/router";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { User, useGlobalContext } from "@/context/GlobalContext";
 import toast, { useToaster } from "react-hot-toast";
 
 interface LayoutProps {
@@ -13,37 +13,27 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  const { loading, setLoading } = useGlobalContext();
+  const { loading, setLoading, user, setUser } = useGlobalContext();
 
   useEffect(() => {
     console.log(status, session);
-    if(status === "loading") setLoading(true)
-    if(status === "unauthenticated") {
-      setLoading(false)
-      toast.error("Authentication failed. Please try again later.")
-      router.push("/");
-    }
-    if (status === "authenticated" && session.user) {
-      setLoading(false)
-      //@ts-ignore
-      switch (session.user.role) {
-        case "admin":
-          router.push("/admin");
-          break;
-        case "hod":
-          router.push("/hod");
-          break;
-        case "faculty":
-          router.push("/faculty");
-          break;
-        case "student":
-          router.push("/student");
-          break;
-        default:
-          router.push("/");
-          toast.error("User not found.")
-          signOut({ callbackUrl: "/" })
+    if (!user.email) {
+      if (status === "loading") setLoading(true);
+      if (status === "unauthenticated") {
+        setLoading(false);
+        toast.error("Authentication failed. Please try again later.");
+        router.push("/");
+        setUser({} as User)
+      }
+      if (status === "authenticated" && session.user) {
+        setLoading(false);
+        setUser({
+          name: session.user.name!,
+          email: session.user.email!,
+          image: session.user.image!,
+          //@ts-ignore
+          role: session.user.role!,
+        });
       }
     }
   }, [session, status]);

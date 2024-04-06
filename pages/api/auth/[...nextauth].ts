@@ -30,6 +30,7 @@ export const authOptions: NextAuthOptions = {
       }
       return false;
     },
+    
     async session({ session, token }) {
       if (session.user && session.user.email) {
         try {

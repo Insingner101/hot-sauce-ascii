@@ -3,15 +3,41 @@ import { Inter } from "next/font/google";
 import Head from "next/head";
 import ToggleTheme from "@/components/ToggleTheme";
 import DTButton from "@/components/DTButton";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Loader from "@/components/Loader";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const { loading } = useGlobalContext();
+  const router = useRouter();
+  const { loading, setLoading, user, setUser } = useGlobalContext();
+
+  useEffect(() => {
+    if (user.email) {
+      switch (user.role) {
+        case "admin":
+          router.push("/admin");
+          break;
+        case "hod":
+          router.push("/hod");
+          break;
+        case "faculty":
+          router.push("/faculty");
+          break;
+        case "student":
+          router.push("/student");
+          break;
+        default:
+          router.push("/");
+          toast.error("User not found.");
+          signOut({ callbackUrl: "/" });
+      }
+    }
+  }, [user]);
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center">
