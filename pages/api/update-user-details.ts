@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -41,25 +42,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ message: 'Insufficient permissions to add new user' });
       }
 
+      let newUserId = null;
+      if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+        newUserId = uuidv4();
+      }
+
       const updateUserDetailsQuery = `
         INSERT INTO user_details (email_id, role)
         VALUES ($1, $2)
         ON CONFLICT (email_id) DO UPDATE SET
           role = $2,
       `;
-      await client.query(updateUserDetailsQuery, [newUserEmail, newUserRole]);
+      await client.query(updateUserDetailsQuery, [newUserEmail, newUserRole, newUserId]);
 
-      const updateIdQuery = `
-        UPDATE user_details ud
-        SET id = (
-          SELECT fd.id
-          FROM form_details fd
-          WHERE fd.email_id = ud.email_id
-          LIMIT 1
-        )
-        WHERE ud.email_id = $1;
-      `;
+      if (newUserRole === 'STUDENT') {
+        const updateIdQuery = `
+          UPDATE user_details ud
+          SET id = (
+            SELECT fd.id
+            FROM form_details fd
+            WHERE fd.email_id = ud.email_id
+            LIMIT 1
+          )
+          WHERE ud.email_id = $1;
+        `;
       await client.query(updateIdQuery, [newUserEmail]);
+
+    } else if (newUserRole === 'FACULTY' || newUserRole === 'HOD') {
+        const newFacultyId = uuidv4();
+        const updateFacultyDetailsQuery = `
+          INSERT INTO faculty_details (id, email_id, role)
+          VALUES ($1, $2, $3)
+          ON CONFLICT (email_id) DO UPDATE SET role = $3;
+        `;
+        await client.query(updateFacultyDetailsQuery, [newFacultyId, newUserEmail, newUserRole]);
+      }
 
       await client.query('COMMIT');
       client.release();
