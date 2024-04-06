@@ -7,6 +7,13 @@ const nextConfig = {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
   },
+  images: {
+    // unoptimized: true,
+    domains: [
+      "lh3.googleusercontent.com"
+    ],
+    minimumCacheTTL: 86400,
+  },
 };
 
 export default nextConfig;

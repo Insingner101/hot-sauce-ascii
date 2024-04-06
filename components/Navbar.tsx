@@ -1,8 +1,10 @@
 import { useGlobalContext } from "@/context/GlobalContext";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { LuMenu } from "react-icons/lu";
 
 export default function Navbar() {
+  const { data: session, status } = useSession();
   const { sidebar, setSidebar } = useGlobalContext();
 
   return (
@@ -20,12 +22,24 @@ export default function Navbar() {
           Department of Computer Science & Information Systems
         </span>
       </div>
-      <LuMenu
-        onClick={() => {
-          setSidebar(!sidebar);
-        }}
-        className="min-w-8 h-8 sm:w-10 sm:h-10 text-black shadow_black rounded cursor-pointer"
-      />
+      <div className="flex items-center cursor-pointer shadow_black_lg rounded-full p-1">
+        <Image
+          src={session?.user?.image ?? ""}
+          alt="Avatar"
+          width={40}
+          height={40}
+          onClick={() => {
+            setSidebar(!sidebar);
+          }}
+          className="rounded-full overflow-hidden"
+        />
+        {/* <LuMenu
+          onClick={() => {
+            setSidebar(!sidebar);
+          }}
+          className="min-w-8 h-8 sm:w-10 sm:h-10 text-black cursor-pointer"
+        /> */}
+      </div>
     </div>
   );
 }
