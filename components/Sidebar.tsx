@@ -1,10 +1,11 @@
 import { useGlobalContext } from "@/context/GlobalContext";
 import { signOut, useSession } from "next-auth/react";
 import ToggleTheme from "./ToggleTheme";
+import Loader from "./Loader";
 
 export default function Sidebar() {
   const { data: session, status } = useSession();
-  const { sidebar } = useGlobalContext();
+  const { sidebar, loading } = useGlobalContext();
   return (
     <div
       className={`transition-all top-0 z-20 ${
@@ -13,9 +14,9 @@ export default function Sidebar() {
     >
       <button
         onClick={() => signOut({ callbackUrl: "/" })}
-        className="w-[16rem] py-2 shadow-black bg-black dark:bg-[#FAFAFA] text-[#FAFAFA] dark:text-black rounded cursor-pointer transition-all hover:bg-[#27272A] dark:hover:bg-[#e0e0e0]"
+        className="flex items-center min-w-[14rem] mt-4 px-4 py-2 gap-3 font-semibold shadow_black_lg border-1 dark:border-0 border-[#e5e7eb] bg-white hover:bg-[#eaeaea] text-black rounded-full cursor-pointer transition-all"
       >
-        Sign out
+        {loading ? <Loader /> : <>Sign-out</>}
       </button>
       <ToggleTheme />
     </div>

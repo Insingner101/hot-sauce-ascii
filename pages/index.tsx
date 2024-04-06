@@ -5,11 +5,13 @@ import ToggleTheme from "@/components/ToggleTheme";
 import DTButton from "@/components/DTButton";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect } from "react";
+import { useGlobalContext } from "@/context/GlobalContext";
+import Loader from "@/components/Loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { loading } = useGlobalContext();
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center">
@@ -33,15 +35,21 @@ export default function Home() {
       </span>
       <button
         onClick={() => signIn("google")}
-        className="flex items-center mt-4 px-4 py-2 gap-3 font-semibold shadow_black_lg border-1 dark:border-0 border-[#e5e7eb] bg-white hover:bg-[#eaeaea] text-black rounded-full cursor-pointer transition-all"
+        className="flex items-center min-w-[14rem] mt-4 px-4 py-2 gap-3 font-semibold shadow_black_lg border-1 dark:border-0 border-[#e5e7eb] bg-white hover:bg-[#eaeaea] text-black rounded-full cursor-pointer transition-all"
       >
-        <Image
-          src="/assets/images/google_logo.png"
-          alt="Bits Logo"
-          width={25}
-          height={25}
-        />
-        Sign-in with Google
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <Image
+              src="/assets/images/google_logo.png"
+              alt="Bits Logo"
+              width={25}
+              height={25}
+            />
+            Sign-in with Google
+          </>
+        )}
       </button>
     </div>
   );

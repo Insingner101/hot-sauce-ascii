@@ -26,8 +26,6 @@ export const authOptions: NextAuthOptions = {
         account.provider === "google" &&
         profile.email!.endsWith("@goa.bits-pilani.ac.in")
       ) {
-        // console.log(account.session_state);
-        // console.log(profile);
         return true;
       }
       return false;
@@ -44,7 +42,7 @@ export const authOptions: NextAuthOptions = {
 
           if (result.rows.length > 0) {
             // @ts-ignore
-            session.user.role = result.rows[0].role;
+            session.user.role = result.rows[0].role.toLowerCase();
             console.log("User role:", result.rows[0].role);
           } else {
             // @ts-ignore
