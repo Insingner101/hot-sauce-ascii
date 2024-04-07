@@ -25,7 +25,7 @@ interface GroupedStudents {
   ic_mail: string;
 }
 
-export default function formEg() {
+export default function Admin() {
   const methods = useForm();
   const [students, setStudents] = useState<AppliedStudent[]>([]);
 
