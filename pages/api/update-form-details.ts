@@ -12,13 +12,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { student_id, name, course_id, grade, links, email_id, course_ic } = req.body;
       const client = await pool.connect();
 
-      const checkEmailExistsQuery = `
-        SELECT role
-        FROM user_details
-        WHERE email_id = $1
-      `;
-      const checkEmailExistsResult = await client.query(checkEmailExistsQuery, [email_id]);
+      const checkCourseQuery = `SELECT 1 FROM course_details WHERE course_id = $1`;
+      const checkCourseResult = await client.query(checkCourseQuery, [course_id]);
 
+      if (checkCourseResult.rows.length === 0) {
+        client.release();
+        return res.status(400).json({ message: 'Invalid course_id' });
+      }
+
+      const checkEmailExistsQuery = `SELECT role FROM user_details WHERE email_id = $1`;
+      const checkEmailExistsResult = await client.query(checkEmailExistsQuery, [email_id]);
       let isUnauthorized = false;
       if (checkEmailExistsResult.rows.length > 0) {
         if (checkEmailExistsResult.rows[0].role !== 'STUDENT') {
@@ -32,15 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const newId = uuidv4();
-      const query = `
-        INSERT INTO form_details (id, student_id, name, course_id, grade, links, email_id, course_ic)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
-      `;
+      const query = `INSERT INTO form_details (id, student_id, name, course_id, grade, links, email_id, course_ic) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
       const values = [newId, student_id, name, course_id, grade, links, email_id, course_ic];
-
       await client.query(query, values);
       client.release();
-
       res.status(200).json({ message: 'Form details updated successfully' });
     } catch (error) {
       console.error('Error updating form details:', error);
