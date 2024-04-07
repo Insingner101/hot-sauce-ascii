@@ -30,7 +30,7 @@ export default function applyFDCMform() {
       redirect: "follow" as RequestRedirect
     };
 
-    fetch("http://localhost:3000/api/update-form-details", requestOptions)
+    fetch("/api/update-form-details", requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
