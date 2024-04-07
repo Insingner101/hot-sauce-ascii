@@ -17,15 +17,20 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     console.log(status, session);
-    if(router.pathname.includes('applyFDCM')) return;
+    if (router.pathname.includes('applyFDCM')) return;
+
     if (!user.email) {
       if (status === "loading") setLoading(true);
+
       if (status === "unauthenticated") {
         setLoading(false);
-        toast.error("Authentication failed. Please try again later.");
-        router.push("/");
-        setUser({} as User)
+        if (router.pathname !== "/") {
+          toast.error("Authentication failed. Please try again later.");
+          router.push("/");
+        }
+        setUser({} as User);
       }
+
       if (status === "authenticated" && session.user) {
         setLoading(false);
         setUser({
@@ -42,14 +47,10 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="w-full h-full flex flex-col flex-1">
       {/* @ts-ignore */}
-      {user?.email && user?.role !== "default" && (
-        <Navbar />
-      )}
+      {user?.email && user?.role !== "default" && <Navbar />}
       <div className="relative w-full flex flex-1">
         {/* @ts-ignore */}
-        {user?.email && user?.role !== "default" && !router.pathname.includes('applyFDCM') && (
-          <Sidebar />
-        )}
+        {user?.email && user?.role !== "default" && !router.pathname.includes('applyFDCM') && <Sidebar />}
         <div className="flex flex-1">{children}</div>
       </div>
     </div>

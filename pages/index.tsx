@@ -61,7 +61,7 @@ export default function Home() {
       </span>
       <button
         onClick={() => signIn("google")}
-        className="flex items-center min-w-[14rem] mt-4 px-4 py-2 gap-3 font-semibold shadow_black_lg border-1 dark:border-0 border-[#e5e7eb] bg-white hover:bg-[#eaeaea] text-black rounded-full cursor-pointer transition-all"
+        className="flex items-center justify-center min-w-[14rem] mt-4 px-4 py-2 gap-3 font-semibold shadow_black_lg border-1 dark:border-0 border-[#e5e7eb] bg-white hover:bg-[#eaeaea] text-black rounded-full cursor-pointer transition-all"
       >
         {loading ? (
           <Loader />
@@ -81,7 +81,7 @@ export default function Home() {
         onClick={() => {
           router.push("/applyFDCM");
         }}
-        className="w-fit text-center mt-4"
+        className="mt-4"
       >
         Apply for FDCM
       </DTButton>

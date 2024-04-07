@@ -1,6 +1,4 @@
 import Accordion from "@/components/Accordion";
-import DTButton from "@/components/DTButton";
-import { CustomInput } from "@/components/Input";
 import Loader from "@/components/Loader";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
@@ -22,6 +20,30 @@ interface FDCM {
   course_ic: string;
   faculty_name: string;
 }
+
+const RoundedButton = ({
+  children,
+  onClick,
+  disabled,
+  loading,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled: boolean;
+  loading: boolean;
+}) => {
+  return (
+    <button
+      onClick={disabled ? () => toast.error("Student already signed!") : onClick}
+      disabled={disabled}
+      className={`rounded-full px-4 py-2 bg-gray-200 text-gray-800 font-semibold transition-opacity ${
+        disabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
+      }`}
+    >
+      {loading ? <Loader /> : children}
+    </button>
+  );
+};
 
 export default function formEg() {
   const methods = useForm();
@@ -109,25 +131,16 @@ export default function formEg() {
                 <p className="text-base font-medium leading-none text-black">
                   {student?.course_id}
                 </p>
-                <DTButton
+                <RoundedButton
                   onClick={() => {
-                    if (student.signed_status) {
-                      toast.error("Student already signed!");
-                      return;
-                    }
                     setSignStudentMail(student.email_id);
                     signStudent(student.student_id, student.course_id);
                   }}
-                  className={`w-fit ${
-                    student.signed_status ? "opacity-50" : "opacity-100"
-                  }`}
+                  disabled={student.signed_status}
+                  loading={loading && signStudentMail === student.email_id}
                 >
-                  {loading && signStudentMail === student.email_id ? (
-                    <Loader />
-                  ) : (
-                    "Sign"
-                  )}
-                </DTButton>
+                  Sign
+                </RoundedButton>
               </div>
             </div>
           }

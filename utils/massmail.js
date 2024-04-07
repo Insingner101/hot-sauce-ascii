@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 export function sendEmailToRecipient(students, recipientEmail) {
   // Function to create the email body
   function createEmailBody(students) {
-    let body = "<h2>Students interested in the course:</h2>";
+    let body = "<h2>Student applications for FDCM:</h2>";
     students.forEach(student => {
       body += `
         <p>Name: ${student.name}</p>
@@ -33,7 +33,7 @@ export function sendEmailToRecipient(students, recipientEmail) {
   const mailOptions = {
     from: 'bitspilanigoacampusadmn@gmail.com', // Your email address
     to: recipientEmail,
-    subject: 'Students interested in your course',
+    subject: 'Student applications for FDCM',
     html: createEmailBody(students)
   };
 

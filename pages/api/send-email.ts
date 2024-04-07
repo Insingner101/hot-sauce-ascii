@@ -11,7 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     try {
       const groupedStudents: GroupedStudents[] = req.body;
-
       const client = await pool.connect();
 
       for (const group of groupedStudents) {
@@ -20,21 +19,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         try {
           await sendEmailToRecipient(students, recipientEmail);
-          
-          const updateQuery = `
-            UPDATE form_details
-            SET email_status = true
-            WHERE id = ANY($1)
-          `;
-          const studentIds = students.map((student) => student.student_id);
-          await client.query(updateQuery, [studentIds]);
+
+          for (const student of students) {
+            const { student_id } = student;
+            const updateQuery = `UPDATE form_details SET email_status = true WHERE student_id = $1`;
+            await client.query(updateQuery, [student_id]);
+          }
         } catch (error) {
           console.error(`Error sending email to ${recipientEmail}:`, error);
         }
       }
 
       client.release();
-
       res.status(200).json({ message: 'Emails sent successfully' });
     } catch (error) {
       console.error('Error sending emails:', error);

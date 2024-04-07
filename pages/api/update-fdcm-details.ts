@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (getIdResult.rows.length === 0) {
         await client.query('ROLLBACK');
         client.release();
-        return res.status(404).json({ error: 'Student ID not found in form details table' });
+        return res.status(404).json({ error: 'Student id not found - student hasnt applied for this course' });
       }
 
       const formDetailsId = getIdResult.rows[0].id;

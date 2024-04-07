@@ -160,7 +160,7 @@ export default function applyFDCMform() {
                 type="submit"
                 className="w-fit flex items-center justify-between px-4 py-2 gap-3 font-semibold border hover:shadow dark:border-0 border-[#e5e7eb] bg-white text-black rounded-md cursor-pointer transition-all"
               >
-                {loading ? <Loader /> : "'Apply"}
+                {loading ? <Loader /> : "Apply"}
               </button>
             </div>
           </form>

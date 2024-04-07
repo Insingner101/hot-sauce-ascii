@@ -47,16 +47,20 @@ export default function Admin() {
     for (const student of students) {
       const { course_ic, ic, email_id, email_status } = student;
 
-      if (!groupedStudents[course_ic]) {
-        groupedStudents[course_ic] = {
-          students: [],
-          ic_mail: course_ic,
-        };
+      if (!email_status) {
+        if (!groupedStudents[course_ic]) {
+          groupedStudents[course_ic] = {
+            students: [],
+            ic_mail: course_ic,
+          };
+        }
+        groupedStudents[course_ic].students.push(student);
       }
-      if (!email_status) groupedStudents[course_ic].students.push(student);
     }
 
-    return Object.values(groupedStudents);
+    return Object.values(groupedStudents).filter(
+      (group) => group.students.length > 0
+    );
   }
 
   const sendMail = async () => {

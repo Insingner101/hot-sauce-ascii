@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useFormContext, FieldValues } from "react-hook-form";
 import { AiOutlineDown } from "react-icons/ai";
+import { TailSpin } from "react-loader-spinner";
 
 interface InputProps {
   type: "text" | "date" | "number" | "textarea";
@@ -11,6 +12,7 @@ interface InputProps {
   allowDecimal?: boolean;
   icon?: React.ReactNode;
   setValue?: React.Dispatch<any>;
+  isLoading?: boolean; // Added isLoading prop
   [key: string]: any;
 }
 
@@ -36,6 +38,7 @@ export const CustomInput = ({
   value,
   setValue,
   icon,
+  isLoading = false, // Added isLoading prop with default value
   ...rest
 }: InputProps) => {
   const {
@@ -100,10 +103,6 @@ export const CustomInput = ({
           value: Date.now(),
           message: `${label} must be greater than or equal to today`,
         };
-        // validatorLocal.pattern = {
-        //   value: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
-        //   message: "Enter a valid date in dd/mm/yyyy format",
-        // };
         break;
       case "textarea":
         break;
@@ -119,39 +118,47 @@ export const CustomInput = ({
       <div
         className={`group w-full ${
           type === "textarea" ? "h-fit py-4" : "h-11"
-        } px-4 mt-1 bg-white border border-lightgray shadow rounded-[5px] flex items-center cursor-pointer`}
+        } px-4 mt-1 bg-white border border-lightgray shadow rounded-[5px] flex items-center cursor-pointer relative`}
       >
-        {type === "textarea" ? (
-          <textarea
-            {...register(name, validator)}
-            {...rest}
-            value={inputValue}
-            onChange={handleChange}
-            placeholder={placeholder}
-            className="flex w-full h-[7rem] bg-transparent text-light text-opacity-[0.80] placeholder-white placeholder-opacity-40  text-sm outline-none"
-          />
-        ) : (
-          <input
-            id={name}
-            {...register(name, validator)}
-            {...rest}
-            type={type}
-            step={"any"}
-            autoComplete="off"
-            onChange={handleChange}
-            onClick={handleClick}
-            placeholder={placeholder}
-            value={inputValue}
-            // id="inputField"
-            className={`flex w-full min-w-0 bg-transparent text-light ${
-              type === "date" ? "opacity-[0.40]" : "text-opacity-[0.80]"
-            } placeholder-white placeholder-opacity-40  text-sm outline-none`}
-          />
-        )}
-        {icon && (
-          <div className={`text-white opacity-[0.80] w-4 h-4 cursor-pointer`}>
-            {icon}
+        {isLoading ? ( // Render loading spinner if isLoading is true
+          <div className="absolute inset-0 flex items-center justify-center">
+            <TailSpin color="#333" height={20} width={20} />
           </div>
+        ) : (
+          <>
+            {type === "textarea" ? (
+              <textarea
+                {...register(name, validator)}
+                {...rest}
+                value={inputValue}
+                onChange={handleChange}
+                placeholder={placeholder}
+                className="flex w-full h-[7rem] bg-transparent text-light text-opacity-[0.80] placeholder-white placeholder-opacity-40  text-sm outline-none"
+              />
+            ) : (
+              <input
+                id={name}
+                {...register(name, validator)}
+                {...rest}
+                type={type}
+                step={"any"}
+                autoComplete="off"
+                onChange={handleChange}
+                onClick={handleClick}
+                placeholder={placeholder}
+                value={inputValue}
+                // id="inputField"
+                className={`flex w-full min-w-0 bg-transparent text-light ${
+                  type === "date" ? "opacity-[0.40]" : "text-opacity-[0.80]"
+                } placeholder-white placeholder-opacity-40  text-sm outline-none`}
+              />
+            )}
+            {icon && (
+              <div className={`text-white opacity-[0.80] w-4 h-4 cursor-pointer`}>
+                {icon}
+              </div>
+            )}
+          </>
         )}
       </div>
 
