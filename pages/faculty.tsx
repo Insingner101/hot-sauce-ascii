@@ -19,7 +19,6 @@ export default function ApplyFDCMform() {
   const [ICMail, setICMail] = useState("");
 
   const onSubmit = (data: any) => {
-    //console.log(data.Name);
     setLoading(true);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -44,7 +43,6 @@ export default function ApplyFDCMform() {
     fetch("/api/update-fdcm-details", requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         if (result.message && result.message.includes("success"))
           toast.success("FDCM added successfully!");
         setLoading(false);
@@ -61,7 +59,6 @@ export default function ApplyFDCMform() {
         `/api/fetch-course-form-details?course_id=${courseId}`
       );
       const data = await response.json();
-      console.log(data);
       if (data.course_title) {
         setCourse_title(data.course_title);
         setCourse_ic(data.ic);
@@ -72,12 +69,6 @@ export default function ApplyFDCMform() {
       return null;
     }
   };
-
-  //   useEffect(() => {
-  //     console.log(courseId);
-  //     setLoading(true);
-  //     getCourseDetails();
-  //   }, [courseId]);
 
   return (
     <>

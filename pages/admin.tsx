@@ -66,7 +66,6 @@ export default function Admin() {
   const sendMail = async () => {
     setLoading(true);
     let mails = groupByIC(students);
-    console.log(mails);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 

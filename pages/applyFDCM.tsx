@@ -76,7 +76,6 @@ export default function ApplyFDCMform() {
       setIsCourseDetailsLoading(true);
       const response = await fetch(`/api/fetch-course-form-details?course_id=${courseId}`);
       const data = await response.json();
-      console.log(data);
       if (data.course_title) {
         setCourse_title(data.course_title);
         setCourse_ic(data.ic);

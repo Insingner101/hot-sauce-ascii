@@ -21,7 +21,6 @@ export default function AppliedStudentsPage() {
   }, []);
 
   const makeCertificate = async () => {
-    console.log(user.name, "CS F121")
   }
 
   // Function to handle certificate download
