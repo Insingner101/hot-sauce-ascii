@@ -77,6 +77,14 @@ export default function Home() {
           </>
         )}
       </button>
+      <DTButton
+        onClick={() => {
+          router.push("/applyFDCM");
+        }}
+        className="w-fit text-center mt-4"
+      >
+        Apply for FDCM
+      </DTButton>
     </div>
   );
 }

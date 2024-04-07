@@ -114,12 +114,12 @@ export const CustomInput = ({
   }, []);
 
   return (
-    <div className="mb-0 w-full">
-      <label className="text-black text-opacity-[0.85] text-sm">{label}</label>
+    <div className="mb-0 w-full h-fit">
+      <label className="text-black font-medium text-opacity-[0.85] text-sm">{label}</label>
       <div
         className={`group w-full ${
           type === "textarea" ? "h-fit py-4" : "h-11"
-        } px-4 mt-1 bg-[#202020] rounded-[5px] flex items-center cursor-pointer`}
+        } px-4 mt-1 bg-white border border-lightgray shadow rounded-[5px] flex items-center cursor-pointer`}
       >
         {type === "textarea" ? (
           <textarea
@@ -128,7 +128,7 @@ export const CustomInput = ({
             value={inputValue}
             onChange={handleChange}
             placeholder={placeholder}
-            className="flex w-full h-[7rem] bg-transparent text-white text-opacity-[0.80] placeholder-white placeholder-opacity-40  text-sm outline-none"
+            className="flex w-full h-[7rem] bg-transparent text-light text-opacity-[0.80] placeholder-white placeholder-opacity-40  text-sm outline-none"
           />
         ) : (
           <input
@@ -143,7 +143,7 @@ export const CustomInput = ({
             placeholder={placeholder}
             value={inputValue}
             // id="inputField"
-            className={`flex w-full min-w-0 bg-transparent text-white ${
+            className={`flex w-full min-w-0 bg-transparent text-light ${
               type === "date" ? "opacity-[0.40]" : "text-opacity-[0.80]"
             } placeholder-white placeholder-opacity-40  text-sm outline-none`}
           />
@@ -248,9 +248,9 @@ export const DropdownInput = ({
 
   return (
     <div className={`select-none w-full flex flex-col justify-start mb-0`}>
-      <label className="text-white text-opacity-[0.85] text-sm">{label}</label>
+      <label className="text-black text-opacity-[0.85] text-sm">{label}</label>
       <div
-        className={`group relative w-full h-11 px-4 mt-1 bg-[#202020] rounded-[5px] flex items-center cursor-pointer`}
+        className={`group relative w-full h-11 px-4 mt-1 bg-white border border-lightgray rounded-[5px] flex items-center cursor-pointer`}
       >
         <input
           title=""

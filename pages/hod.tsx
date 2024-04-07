@@ -1,12 +1,14 @@
 import Accordion from "@/components/Accordion";
 import DTButton from "@/components/DTButton";
 import { CustomInput } from "@/components/Input";
+import Loader from "@/components/Loader";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface FDCM {
   student_id: string;
@@ -17,35 +19,78 @@ interface FDCM {
   recommendation: string;
   remark: string;
   signed_status: boolean;
+  course_ic: string;
+  faculty_name: string;
 }
 
 export default function formEg() {
   const methods = useForm();
   const [students, setStudents] = useState<FDCM[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [signStudentMail, setSignStudentMail] = useState("");
 
-  useEffect(() => {
+  const getFdcmDetails = async () => {
+    setLoading(true);
     fetch("http://localhost:3000/api/fetch-fdcm-details", {
       method: "GET",
       redirect: "follow",
     })
       .then((response) => response.json())
-      .then((result) => setStudents(result))
-      .catch((error) => console.error(error));
+      .then((result) => {
+        setStudents(result);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Unable to fetch FDCM details!");
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getFdcmDetails();
   }, []);
+
+  const signStudent = async (email: string, course_id: string) => {
+    console.log(email, course_id);
+    setLoading(true);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      student_id: "2021B5A42705G",
+      course_id: "CS F123",
+    });
+
+    const requestOptions = {
+      method: "PUT",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow" as RequestRedirect,
+    };
+
+    fetch("http://localhost:3000/api/update-sign-details", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.message && result.message.includes("successfully"))
+          toast.success("Signed successfully!");
+        getFdcmDetails();
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Signing failed!");
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="flex flex-col flex-1 items-center justify-start pt-10 pb-10 px-5 sm:px-16">
       <Head>
-        <title>Admin - FDCM</title>
+        <title>HOD - FDCM</title>
       </Head>
       <div className="flex items-center justify-between w-full">
         <span className="text-black">Applied Students</span>
-        <DTButton
-          //   onClick={() => signOut({ callbackUrl: "/" })}
-          className="py-2"
-        >
-          Email Faculty
-        </DTButton>
       </div>
       {students.map((student, index) => (
         <Accordion
@@ -60,9 +105,30 @@ export default function formEg() {
                   {student?.email_id}
                 </p>
               </div>
-              <p className="text-base font-medium leading-none text-black">
-                {student?.course_id}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-base font-medium leading-none text-black">
+                  {student?.course_id}
+                </p>
+                <DTButton
+                  onClick={() => {
+                    if (student.signed_status) {
+                      toast.error("Student already signed!");
+                      return;
+                    }
+                    setSignStudentMail(student.email_id);
+                    signStudent(student.email_id, student.course_id);
+                  }}
+                  className={`w-fit ${
+                    student.signed_status ? "opacity-50" : "opacity-100"
+                  }`}
+                >
+                  {loading && signStudentMail === student.email_id ? (
+                    <Loader />
+                  ) : (
+                    "Sign"
+                  )}
+                </DTButton>
+              </div>
             </div>
           }
           Content={
@@ -73,14 +139,17 @@ export default function formEg() {
                   Instructor in charge
                 </p>
                 <div className="rounded border border-lightgray p-2.5">
-                  <div className="flex flex-col space-y-1">
+                  <div className="flex flex-col space-y-2">
                     <p className="text-base font-medium leading-none text-black">
-                      {student?.student_id}
+                      {student?.faculty_name}
                     </p>
                     <p className="text-sm leading-none text-muted-foreground text-light">
-                      {student?.email_id}
+                      {student?.course_ic}
                     </p>
-                    <KeyValueElement keyString="Component" value={student.component} />
+                    <KeyValueElement
+                      keyString="Component"
+                      value={student.component}
+                    />
                   </div>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import Accordion from "@/components/Accordion";
 import DTButton from "@/components/DTButton";
 import { CustomInput } from "@/components/Input";
+import Loader from "@/components/Loader";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
@@ -28,9 +29,10 @@ export interface GroupedStudents {
 export default function Admin() {
   const methods = useForm();
   const [students, setStudents] = useState<AppliedStudent[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/fetch-student-details", {
+    fetch("http://localhost:3000/api/fetch-student-form-details", {
       method: "GET",
       redirect: "follow",
     })
@@ -43,41 +45,46 @@ export default function Admin() {
     const groupedStudents: { [key: string]: GroupedStudents } = {};
 
     for (const student of students) {
-      const { course_ic, ic, email_id } = student;
+      const { course_ic, ic, email_id, email_status } = student;
 
       if (!groupedStudents[course_ic]) {
         groupedStudents[course_ic] = {
           students: [],
-          ic_mail: ic,
+          ic_mail: course_ic,
         };
       }
-
-      groupedStudents[course_ic].students.push(student);
+      if (!email_status) groupedStudents[course_ic].students.push(student);
     }
 
     return Object.values(groupedStudents);
   }
 
   const sendMail = async () => {
-    let mails = groupByIC((students));
-    console.log(mails)
-    try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(mails),
+    setLoading(true);
+    let mails = groupByIC(students);
+    console.log(mails);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify(mails);
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow" as RequestRedirect,
+    };
+
+    fetch("http://localhost:3000/api/send-email", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
       });
-  
-      if (response.ok) {
-        console.log('Emails sent successfully');
-      } else {
-        console.error('Error sending emails:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error sending emails:', error);
-    }
   };
 
   return (
@@ -93,7 +100,7 @@ export default function Admin() {
           }}
           className="py-2"
         >
-          Email Faculty
+          {loading ? <Loader /> : "Email Faculty"}
         </DTButton>
       </div>
       {students.map((student, index) => (
