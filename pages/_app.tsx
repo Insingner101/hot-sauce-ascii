@@ -19,7 +19,7 @@ export default function App({ Component, pageProps }: AppProps) {
         disableTransitionOnChange
       >
         <GlobalProvider>
-          <div className="w-[100vw] h-[100vh] flex dark:bg-black bg-white">
+          <div className="w-[100vw] h-[100vh] overflow-x-hidden flex dark:bg-black bg-white">
             <Layout>
               <Component {...pageProps} />
             </Layout>

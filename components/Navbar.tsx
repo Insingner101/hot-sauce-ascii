@@ -20,7 +20,7 @@ export default function Navbar() {
           Department of Computer Science & Information Systems
         </span>
       </div>
-      <div className="flex items-center cursor-pointer shadow_black_lg rounded-full p-1">
+      <div className="flex items-center cursor-pointer border border-[#e5e7eb] hover:shadow transition-all rounded-full p-1">
         <Image
           src={user?.image ?? ""}
           alt="Avatar"

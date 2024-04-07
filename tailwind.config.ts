@@ -16,8 +16,13 @@ const config: Config = {
       },
       colors: {
         "black" : "#09090B",
-        "light" : "#71717A"
-      }
+        "light" : "#71717A",
+        "lightgray" : "#e5e7eb"
+      },
+      transitionProperty: {
+        'width': 'width',
+        'height': 'height'
+    },
     },
   },
   plugins: [],

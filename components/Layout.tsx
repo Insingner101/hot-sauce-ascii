@@ -41,12 +41,12 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="w-full h-full flex flex-col flex-1">
       {/* @ts-ignore */}
-      {status === "authenticated" && session?.user?.role !== "default" && (
+      {user?.email && user?.role !== "default" && (
         <Navbar />
       )}
       <div className="relative w-full flex flex-1">
         {/* @ts-ignore */}
-        {status === "authenticated" && session?.user?.role !== "default" && (
+        {user?.email && user?.role !== "default" && (
           <Sidebar />
         )}
         <div className="flex flex-1">{children}</div>

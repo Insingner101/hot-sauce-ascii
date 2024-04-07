@@ -26,7 +26,7 @@ interface GlobalProviderProps {
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
-  const [sidebar, setSidebar] = useState(false);
+  const [sidebar, setSidebar] = useState(true);
   const [user, setUser] = useState<User>({} as User);
 
   return (
