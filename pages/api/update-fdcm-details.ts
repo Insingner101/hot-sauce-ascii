@@ -8,7 +8,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      const { student_id, email_id, course_id, component, grade, recommendation, remark, signed_status } = req.body;
+      const { student_id, email_id, course_id, component, grade, recommendation, remark} = req.body;
 
       const client = await pool.connect();
       await client.query('BEGIN');
@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const updateQuery = `
         INSERT INTO fdcm_details (id, student_id, email_id, course_id, component, grade, recommendation, remark, signed_status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false)
         ON CONFLICT (id) DO UPDATE SET
           student_id = $2,
           email_id = $3,
@@ -40,9 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           grade = $6,
           recommendation = $7,
           remark = $8,
-          signed_status = $9;
+          signed_status = false;
       `;
-      await client.query(updateQuery, [formDetailsId, student_id, email_id, course_id, component, grade, recommendation, remark, signed_status]);
+      await client.query(updateQuery, [formDetailsId, student_id, email_id, course_id, component, grade, recommendation, remark]);
 
       await client.query('COMMIT');
       client.release();

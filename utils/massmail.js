@@ -13,6 +13,7 @@ export function sendEmailToRecipient(students, recipientEmail) {
         <p>Grade: ${student.grade}</p>
         <p>Email: ${student.email_id}</p>
         <p>Resume: <a href="${student.links}">View Resume</a></p>
+        <p>Manual: <a href="https://drive.google.com/drive/folders/1ThHT2HTNE57ZY3J7hggaC2ALUrfjDmz6?usp=drive_link">User Manual</a></p>
         <hr>
       `;
     });
