@@ -1,5 +1,6 @@
 import DTButton from "@/components/DTButton";
 import { CustomInput, DropdownInput } from "@/components/Input";
+import Loader from "@/components/Loader";
 import { useGlobalContext } from "@/context/GlobalContext";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
@@ -11,6 +12,7 @@ import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 export default function ApplyFDCMform() {
   const methods = useForm();
   const onSubmit: SubmitHandler<any> = (data: any) => {
+    setLoading(true)
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -52,12 +54,14 @@ export default function ApplyFDCMform() {
           setErrorMessage(result.message);
           setShowSuccessBanner(false);
         }
+        setLoading(false)
       })
       .catch((error) => {
         console.error(error);
         setShowErrorBanner(true);
         setErrorMessage("Error updating form details");
         setShowSuccessBanner(false);
+        setLoading(false)
       });
   };
 
@@ -114,7 +118,7 @@ export default function ApplyFDCMform() {
         <title>Apply - FDCM</title>
       </Head>
       <div className="w-full flex flex-col pt-10 pb-10 px-5 sm:px-16">
-        <span className="text-black">Apply for FDCM</span>
+        <span className="text-black text-xl font-medium">Apply for FDCM</span>
         {showErrorBanner && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
             <strong className="font-bold mr-2">
@@ -130,7 +134,7 @@ export default function ApplyFDCMform() {
               <AiOutlineCheckCircle className="inline-block align-text-top mr-2" />
               Success
             </strong>
-            <span className="block sm:inline">Form details updated successfully.</span>
+            <span className="block sm:inline">Apllication submitted successfully.</span>
           </div>
         )}
         <FormProvider {...methods}>
@@ -217,7 +221,7 @@ export default function ApplyFDCMform() {
                 type="submit"
                 className="w-fit flex items-center justify-between px-4 py-2 gap-3 font-semibold border hover:shadow dark:border-0 border-[#e5e7eb] bg-white text-black rounded-md cursor-pointer transition-all"
               >
-                Apply
+                {loading ? <Loader /> : "Apply"}
               </button>
             </div>
           </form>

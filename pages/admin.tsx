@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-interface AppliedStudent {
+export interface AppliedStudent {
   student_id: string;
   name: string;
   course_id: string;
@@ -31,7 +31,7 @@ export default function Admin() {
   const [students, setStudents] = useState<AppliedStudent[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const getFDCM = async () => {
     fetch("/api/fetch-student-form-details", {
       method: "GET",
       redirect: "follow",
@@ -39,6 +39,10 @@ export default function Admin() {
       .then((response) => response.json())
       .then((result) => setStudents(result))
       .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    getFDCM();
   }, []);
 
   function groupByIC(students: AppliedStudent[]): GroupedStudents[] {
@@ -82,6 +86,7 @@ export default function Admin() {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
+        getFDCM()
         setLoading(false);
       })
       .catch((error) => {
@@ -106,73 +111,87 @@ export default function Admin() {
           {loading ? <Loader /> : "Email Faculty"}
         </DTButton>
       </div>
-      {students.map((student, index) => (
-        <Accordion
-          key={index}
-          Header={
-            <div className="w-full flex items-center justify-between pr-2">
-              <div className="flex flex-col space-y-1">
-                <p className="text-base font-medium leading-none text-black">
-                  {student?.name}
-                </p>
-                <p className="text-sm leading-none text-muted-foreground text-light">
-                  {student?.email_id}
-                </p>
-              </div>
-              <p className="text-base font-medium leading-none text-black">
-                {student?.course_id}
-              </p>
-            </div>
-          }
-          Content={
-            <div className="w-full flex flex-col md:flex-row p-2 gap-5">
-              {/* instructor details  */}
-              <div className="flex flex-col gap-1">
-                <p className="text-base leading-none text-muted-foreground text-light">
-                  Instructor in charge
-                </p>
-                <div className="rounded border border-lightgray p-2.5">
+      {students.filter((student) => !student.email_status).length > 0 ? (
+        students
+          .filter((student) => !student.email_status)
+          .map((student, index) => (
+            <Accordion
+              key={index}
+              Header={
+                <div className="w-full flex items-center justify-between pr-2">
                   <div className="flex flex-col space-y-1">
                     <p className="text-base font-medium leading-none text-black">
-                      {student?.ic}
+                      {student?.name}
                     </p>
                     <p className="text-sm leading-none text-muted-foreground text-light">
-                      {student?.course_ic}
+                      {student?.email_id}
                     </p>
                   </div>
+                  <p className="text-base font-medium leading-none text-black">
+                    {student?.course_id}
+                  </p>
                 </div>
-              </div>
-              {/* student details  */}
-              <div className="flex flex-col gap-1">
-                <p className="text-base leading-none text-muted-foreground text-light">
-                  Student details
-                </p>
-                <div className="rounded flex flex-col gap-2 border border-lightgray p-2.5">
-                  <KeyValueElement keyString="Id" value={student.student_id} />
-                  <KeyValueElement keyString="Grade" value={student.grade} />
-                  <KeyValueElement
-                    keyString="Email sent"
-                    value={student.email_status ? "Yes" : "No"}
-                  />
-                  <div className="flex items-center gap-2">
-                    <p className="text-base font-medium leading-none text-black">
-                      Links:
+              }
+              Content={
+                <div className="w-full flex flex-col md:flex-row p-2 gap-5">
+                  {/* instructor details  */}
+                  <div className="flex flex-col gap-1">
+                    <p className="text-base leading-none text-muted-foreground text-light">
+                      Instructor in charge
                     </p>
-                    <Link
-                      href={student.links}
-                      target="_blank"
-                      className="text-base leading-none text-muted-foreground text-[#0000EE]"
-                    >
-                      Resume
-                    </Link>
+                    <div className="rounded border border-lightgray p-2.5">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-base font-medium leading-none text-black">
+                          {student?.ic}
+                        </p>
+                        <p className="text-sm leading-none text-muted-foreground text-light">
+                          {student?.course_ic}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* student details  */}
+                  <div className="flex flex-col gap-1">
+                    <p className="text-base leading-none text-muted-foreground text-light">
+                      Student details
+                    </p>
+                    <div className="rounded flex flex-col gap-2 border border-lightgray p-2.5">
+                      <KeyValueElement
+                        keyString="Id"
+                        value={student.student_id}
+                      />
+                      <KeyValueElement
+                        keyString="Grade"
+                        value={student.grade}
+                      />
+                      <KeyValueElement
+                        keyString="Email sent"
+                        value={student.email_status ? "Yes" : "No"}
+                      />
+                      <div className="flex items-center gap-2">
+                        <p className="text-base font-medium leading-none text-black">
+                          Links:
+                        </p>
+                        <Link
+                          href={student.links}
+                          target="_blank"
+                          className="text-base leading-none text-muted-foreground text-[#0000EE]"
+                        >
+                          Resume
+                        </Link>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          }
-          height="h-[16rem] md:h-[10rem]"
-        />
-      ))}
+              }
+              height="h-[16rem] md:h-[10rem]"
+            />
+          ))
+      ) : (
+        <span className="text-light font-medium mt-16 text-left w-full">
+          All students mailed to respective faculties.
+        </span>
+      )}
     </div>
   );
 }

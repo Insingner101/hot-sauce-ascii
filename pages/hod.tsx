@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { AiOutlineCloseCircle, AiOutlineInfoCircle } from "react-icons/ai";
 
-interface FDCM {
+export interface FDCM {
   student_id: string;
   email_id: string;
   course_id: string;
@@ -34,7 +35,9 @@ const RoundedButton = ({
 }) => {
   return (
     <button
-      onClick={disabled ? () => toast.error("Student already signed!") : onClick}
+      onClick={
+        disabled ? () => toast.error("Student already signed!") : onClick
+      }
       disabled={disabled}
       className={`rounded-full px-4 py-2 bg-gray-200 text-gray-800 font-semibold transition-opacity ${
         disabled ? "opacity-50 cursor-not-allowed" : "opacity-100"
@@ -114,82 +117,98 @@ export default function FormEg() {
       <div className="flex items-center justify-between w-full">
         <span className="text-black">Applied Students</span>
       </div>
-      {students.map((student, index) => (
-        <Accordion
-          key={index}
-          Header={
-            <div className="w-full flex items-center justify-between pr-2">
-              <div className="flex flex-col space-y-1">
-                <p className="text-base font-medium leading-none text-black">
-                  {student?.student_id}
-                </p>
-                <p className="text-sm leading-none text-muted-foreground text-light">
-                  {student?.email_id}
-                </p>
+      {students.length > 0 ? (
+        students.map((student, index) => (
+          <Accordion
+            key={index}
+            Header={
+              <div className="w-full flex items-center justify-between pr-2">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-base font-medium leading-none text-black">
+                    {student?.student_id}
+                  </p>
+                  <p className="text-sm leading-none text-muted-foreground text-light">
+                    {student?.email_id}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-base font-medium leading-none text-black">
+                    {student?.course_id}
+                  </p>
+                  <RoundedButton
+                    onClick={() => {
+                      setSignStudentMail(student.email_id);
+                      signStudent(student.student_id, student.course_id);
+                    }}
+                    disabled={student.signed_status}
+                    loading={loading && signStudentMail === student.email_id}
+                  >
+                    Sign
+                  </RoundedButton>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <p className="text-base font-medium leading-none text-black">
-                  {student?.course_id}
-                </p>
-                <RoundedButton
-                  onClick={() => {
-                    setSignStudentMail(student.email_id);
-                    signStudent(student.student_id, student.course_id);
-                  }}
-                  disabled={student.signed_status}
-                  loading={loading && signStudentMail === student.email_id}
-                >
-                  Sign
-                </RoundedButton>
-              </div>
-            </div>
-          }
-          Content={
-            <div className="w-full flex flex-col md:flex-row p-2 gap-5">
-              {/* instructor details  */}
-              <div className="flex flex-col gap-1">
-                <p className="text-base leading-none text-muted-foreground text-light">
-                  Instructor in charge
-                </p>
-                <div className="rounded border border-lightgray p-2.5">
-                  <div className="flex flex-col space-y-2">
-                    <p className="text-base font-medium leading-none text-black">
-                      {student?.faculty_name}
-                    </p>
-                    <p className="text-sm leading-none text-muted-foreground text-light">
-                      {student?.course_ic}
-                    </p>
+            }
+            Content={
+              <div className="w-full flex flex-col md:flex-row p-2 gap-5">
+                {/* instructor details  */}
+                <div className="flex flex-col gap-1">
+                  <p className="text-base leading-none text-muted-foreground text-light">
+                    Instructor in charge
+                  </p>
+                  <div className="rounded border border-lightgray p-2.5">
+                    <div className="flex flex-col space-y-2">
+                      <p className="text-base font-medium leading-none text-black">
+                        {student?.faculty_name}
+                      </p>
+                      <p className="text-sm leading-none text-muted-foreground text-light">
+                        {student?.course_ic}
+                      </p>
+                      <KeyValueElement
+                        keyString="Component"
+                        value={student.component}
+                      />
+                    </div>
+                  </div>
+                </div>
+                {/* student details  */}
+                <div className="flex flex-col gap-1">
+                  <p className="text-base leading-none text-muted-foreground text-light">
+                    Student details
+                  </p>
+                  <div className="rounded flex flex-col gap-2 border border-lightgray p-2.5">
                     <KeyValueElement
-                      keyString="Component"
-                      value={student.component}
+                      keyString="Recommendation"
+                      value={student.recommendation}
                     />
+                    <KeyValueElement
+                      keyString="Remark"
+                      value={student.remark}
+                    />
+                    <KeyValueElement keyString="Grade" value={student.grade} />
                   </div>
                 </div>
               </div>
-              {/* student details  */}
-              <div className="flex flex-col gap-1">
-                <p className="text-base leading-none text-muted-foreground text-light">
-                  Student details
-                </p>
-                <div className="rounded flex flex-col gap-2 border border-lightgray p-2.5">
-                  <KeyValueElement
-                    keyString="Recommendation"
-                    value={student.recommendation}
-                  />
-                  <KeyValueElement keyString="Remark" value={student.remark} />
-                  <KeyValueElement keyString="Grade" value={student.grade} />
-                </div>
-              </div>
-            </div>
-          }
-          height="h-[16rem] md:h-[10rem]"
-        />
-      ))}
+            }
+            height="h-[16rem] md:h-[10rem]"
+          />
+        ))
+      ) : (
+        <div
+          className="bg-teal-100 flex items-center w-full border border-teal-400 text-teal-700 px-4 py-3 rounded relative mt-4"
+          role="alert"
+        >
+          <strong className="font-bold mr-2 flex items-center">
+            <AiOutlineInfoCircle className="inline-block align-text-top mr-2" />
+            Info :
+          </strong>
+          <span className="block sm:inline">No FDCM students.</span>
+        </div>
+      )}
     </div>
   );
 }
 
-const KeyValueElement = ({
+export const KeyValueElement = ({
   keyString,
   value,
 }: {

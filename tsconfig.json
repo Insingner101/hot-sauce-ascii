@@ -16,6 +16,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "utils/massmail.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "utils/massmail.js", "utils/run.js"],
   "exclude": ["node_modules"]
 }

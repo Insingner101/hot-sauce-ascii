@@ -56,7 +56,7 @@ export default function Home() {
         width={223}
         height={250}
       />
-      <span className="text-lg text-light font-medium">
+      <span className="text-lg text-light font-medium text-center">
         Department of Computer Science & Information Systems
       </span>
       <button
@@ -79,7 +79,7 @@ export default function Home() {
       </button>
       <DTButton
         onClick={() => {
-          router.push("/ApplyFDCM");
+          router.push("/applyFDCM");
         }}
         className="mt-4"
       >
