@@ -16,6 +16,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const client = await pool.connect();
 
+      // Check if the signed_status is already true
+      const checkQuery = `
+        SELECT signed_status
+        FROM fdcm_details
+        WHERE student_id = $1 AND course_id = $2;
+      `;
+      const checkValues = [student_id, course_id];
+      const checkResult = await client.query(checkQuery, checkValues);
+
+      if (checkResult.rows.length > 0 && checkResult.rows[0].signed_status) {
+        client.release();
+        return res.status(200).json({ message: 'Already signed' });
+      }
+
       const updateQuery = `
         UPDATE fdcm_details
         SET signed_status = true
