@@ -32,7 +32,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/fetch-student-form-details", {
+    fetch("/api/fetch-student-form-details", {
       method: "GET",
       redirect: "follow",
     })
@@ -79,7 +79,7 @@ export default function Admin() {
       redirect: "follow" as RequestRedirect,
     };
 
-    fetch("http://localhost:3000/api/send-email", requestOptions)
+    fetch("/api/send-email", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);

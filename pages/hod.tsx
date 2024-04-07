@@ -53,7 +53,7 @@ export default function FormEg() {
 
   const getFdcmDetails = async () => {
     setLoading(true);
-    fetch("http://localhost:3000/api/fetch-fdcm-details", {
+    fetch("/api/fetch-fdcm-details", {
       method: "GET",
       redirect: "follow",
     })
@@ -91,7 +91,7 @@ export default function FormEg() {
       redirect: "follow" as RequestRedirect,
     };
 
-    fetch("http://localhost:3000/api/update-sign-details", requestOptions)
+    fetch("/api/update-sign-details", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.message && result.message.includes("successfully"))

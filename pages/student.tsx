@@ -11,7 +11,7 @@ export default function AppliedStudentsPage() {
   const {user} = useGlobalContext()
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/fetch-student-details", {
+    fetch("/api/fetch-student-details", {
       method: "GET",
       redirect: "follow",
     })

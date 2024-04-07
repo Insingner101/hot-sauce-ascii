@@ -41,7 +41,7 @@ export default function ApplyFDCMform() {
       redirect: "follow" as RequestRedirect,
     };
 
-    fetch("http://localhost:3000/api/update-fdcm-details", requestOptions)
+    fetch("/api/update-fdcm-details", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
