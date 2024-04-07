@@ -20,7 +20,7 @@ interface AppliedStudent {
   email_status: boolean;
 }
 
-interface GroupedStudents {
+export interface GroupedStudents {
   students: AppliedStudent[];
   ic_mail: string;
 }
@@ -61,6 +61,23 @@ export default function Admin() {
   const sendMail = async () => {
     let mails = groupByIC((students));
     console.log(mails)
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mails),
+      });
+  
+      if (response.ok) {
+        console.log('Emails sent successfully');
+      } else {
+        console.error('Error sending emails:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error sending emails:', error);
+    }
   };
 
   return (
