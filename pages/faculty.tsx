@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function applyFDCMform() {
+export default function ApplyFDCMform() {
   const methods = useForm();
 
   const [courseId, setCourseId] = useState("");
