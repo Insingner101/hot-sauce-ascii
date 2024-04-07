@@ -265,7 +265,7 @@ export const DropdownInput = ({
           onChange={handleSearch}
           placeholder={placeholder}
           onClick={showDropdown}
-          className="flex w-full bg-transparent text-white text-opacity-[0.80] placeholder-white placeholder-opacity-40 text-sm outline-none"
+          className="flex w-full bg-transparent text-light text-opacity-[0.80] placeholder-white placeholder-opacity-40 text-sm outline-none"
         />
         <AiOutlineDown
           id="dropicon-search-box-1234"
@@ -273,7 +273,7 @@ export const DropdownInput = ({
           className="text-white opacity-[0.40] w-4 h-4"
         />
         {showResults && (
-          <div className="flex flex-col gap-1 w-full p-1 max-h-[9rem] overflow-y-auto bg-black border-[1px] z-10 border-[#191919] rounded-md absolute mt-2 left-0 top-full">
+          <div className="flex flex-col gap-1 w-full p-1 max-h-[9rem] overflow-y-auto bg-white border-[1px] z-10 border-lightgray rounded-md absolute mt-2 left-0 top-full">
             {searchResults?.map((item, index) => (
               <div
                 key={index}
@@ -284,7 +284,7 @@ export const DropdownInput = ({
                   setValue(name, item);
                   setShowResults(false);
                 }}
-                className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-neutral-900 cursor-pointer"
+                className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-neutral-900 cursor-pointer text-light"
               >
                 {item}
                 {/* <MdVerified className="text-blue-500" /> */}
