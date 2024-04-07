@@ -5,7 +5,7 @@ import Loader from "./Loader";
 import Image from "next/image";
 import { PiSignOutBold } from "react-icons/pi";
 import { FaUser } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 
 interface SidebarOption {
@@ -19,20 +19,26 @@ export default function Sidebar() {
   const [options, setOptions] = useState<SidebarOption[]>([]);
   const router = useRouter();
 
-  const adminPages = [
-    { name: "Students", icon: FaUser, url: "/admin" },
-    { name: "Users", icon: FaUser, url: "/users" },
-  ];
-
-  const hodPages = [
-    { name: "FDCM", icon: FaUser, url: "/hod" },
-    { name: "Faculty", icon: FaUser, url: "/add-user" },
-    { name: "Courses", icon: FaUser, url: "/users" },
-  ];
-
-  const facultyPages = [{ name: "FDCM", icon: FaUser, url: "/faculty" }];
-
-  const studentPages = [{ name: "FDCM", icon: FaUser, url: "/student" }];
+  const adminPages = useMemo(
+    () => [
+      { name: "Students", icon: FaUser, url: "/admin" },
+      { name: "Users", icon: FaUser, url: "/users" },
+    ],
+    []
+  );
+  
+  const hodPages = useMemo(
+    () => [
+      { name: "FDCM", icon: FaUser, url: "/hod" },
+      { name: "Faculty", icon: FaUser, url: "/add-user" },
+      { name: "Courses", icon: FaUser, url: "/users" },
+    ],
+    []
+  );
+  
+  const facultyPages = useMemo(() => [{ name: "FDCM", icon: FaUser, url: "/faculty" }], []);
+  
+  const studentPages = useMemo(() => [{ name: "FDCM", icon: FaUser, url: "/student" }], []);
 
   useEffect(() => {
     if (user.email) {
@@ -53,7 +59,7 @@ export default function Sidebar() {
           setOptions([]);
       }
     }
-  }, [user]);
+  }, [user, adminPages, facultyPages, hodPages, studentPages]);
 
   return (
     <div
@@ -79,6 +85,7 @@ export default function Sidebar() {
       {/* options  */}
       {options.map((Option) => (
         <div
+          key={Option.url} // Add a unique key prop
           onClick={() => {
             router.push(Option.url);
           }}
