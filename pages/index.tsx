@@ -79,7 +79,7 @@ export default function Home() {
       </button>
       <DTButton
         onClick={() => {
-          router.push("/applyFDCM");
+          router.push("/ApplyFDCM");
         }}
         className="mt-4"
       >

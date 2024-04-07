@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     console.log(status, session);
-    if (router.pathname.includes('applyFDCM')) return;
+    if (router.pathname.includes('ApplyFDCM')) return;
 
     if (!user.email) {
       if (status === "loading") setLoading(true);
@@ -50,7 +50,7 @@ export default function Layout({ children }: LayoutProps) {
       {user?.email && user?.role !== "default" && <Navbar />}
       <div className="relative w-full flex flex-1">
         {/* @ts-ignore */}
-        {user?.email && user?.role !== "default" && !router.pathname.includes('applyFDCM') && <Sidebar />}
+        {user?.email && user?.role !== "default" && !router.pathname.includes('ApplyFDCM') && <Sidebar />}
         <div className="flex flex-1">{children}</div>
       </div>
     </div>

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 
-export default function applyFDCMform() {
+export default function ApplyFDCMform() {
   const methods = useForm();
   const onSubmit: SubmitHandler<any> = (data: any) => {
     const myHeaders = new Headers();

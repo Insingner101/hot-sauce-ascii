@@ -45,7 +45,7 @@ const RoundedButton = ({
   );
 };
 
-export default function formEg() {
+export default function FormEg() {
   const methods = useForm();
   const [students, setStudents] = useState<FDCM[]>([]);
   const [loading, setLoading] = useState(false);
