@@ -9,11 +9,37 @@ import { FormProvider, useForm } from "react-hook-form";
 export default function applyFDCMform() {
   const methods = useForm();
   const onSubmit = (data: any) => {
-    console.log(data.Name);
+    //console.log(data.Name);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      "student_id": data.ID,
+      "name": data.Name,
+      "course_id": data.CourseCode,
+      "grade": data.grade,
+      "links": data.link,
+      "email_id": data.mail,
+      "course_ic": ICMail
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow" as RequestRedirect
+    };
+
+    fetch("http://localhost:3000/api/update-form-details", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.error(error));
+        
   };
 
   const [courseId,setCourseId] = useState("")
   const [loading, setLoading] = useState(false)
+  const [ICMail, setICMail] = useState("")
 
   const getCourseDetails = async() => {
     try {
@@ -23,6 +49,7 @@ export default function applyFDCMform() {
       if(data.course_title){
         methods.setValue('CourseTitle',data.course_title)
         methods.setValue('IC',data.ic)
+        setICMail(data.course_ic)
       }
     } catch (error) {
       console.error('Error fetching course details:', error);
