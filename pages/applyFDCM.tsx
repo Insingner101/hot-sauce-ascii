@@ -4,7 +4,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import { signOut } from "next-auth/react";
 import Head from "next/head";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FormProvider, useForm, SubmitHandler } from "react-hook-form";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 
@@ -71,7 +71,7 @@ export default function ApplyFDCMform() {
   const [showErrorBanner, setShowErrorBanner] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const getCourseDetails = async () => {
+  const getCourseDetails = useCallback(async () => {
     try {
       setIsCourseDetailsLoading(true);
       const response = await fetch(`/api/fetch-course-form-details?course_id=${courseId}`);
@@ -91,15 +91,23 @@ export default function ApplyFDCMform() {
     } finally {
       setIsCourseDetailsLoading(false);
     }
-  };
+  }, [courseId]);
+  
+  useEffect(() => {
+    const delayedFetch = setTimeout(() => {
+      getCourseDetails();
+    }, 500);
+  
+    return () => clearTimeout(delayedFetch);
+  }, [getCourseDetails]);
 
   useEffect(() => {
     const delayedFetch = setTimeout(() => {
       getCourseDetails();
     }, 500);
-
+  
     return () => clearTimeout(delayedFetch);
-  }, [courseId]);
+  }, [courseId, getCourseDetails]);
 
   return (
     <>

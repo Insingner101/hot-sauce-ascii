@@ -18,10 +18,8 @@ export default function Layout({ children }: LayoutProps) {
   useEffect(() => {
     console.log(status, session);
     if (router.pathname.includes('ApplyFDCM')) return;
-
     if (!user.email) {
       if (status === "loading") setLoading(true);
-
       if (status === "unauthenticated") {
         setLoading(false);
         if (router.pathname !== "/") {
@@ -30,7 +28,6 @@ export default function Layout({ children }: LayoutProps) {
         }
         setUser({} as User);
       }
-
       if (status === "authenticated" && session.user) {
         setLoading(false);
         setUser({
@@ -42,8 +39,8 @@ export default function Layout({ children }: LayoutProps) {
         });
       }
     }
-  }, [session, status]);
-
+  }, [session, status, router, setLoading, setUser, user.email]);
+  
   return (
     <div className="w-full h-full flex flex-col flex-1">
       {/* @ts-ignore */}

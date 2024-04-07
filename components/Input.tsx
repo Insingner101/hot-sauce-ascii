@@ -110,7 +110,7 @@ export const CustomInput = ({
         break;
     }
     setValidator(validatorLocal);
-  }, []);
+  }, [allowDecimal, isRequired, label, type]);
 
   return (
     <div className="mb-0 w-full h-fit">
