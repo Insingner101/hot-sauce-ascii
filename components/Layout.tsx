@@ -17,10 +17,10 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     console.log(status, session);
-    if (router.pathname.includes("applyFDCM") || router.pathname === "/")
+    if (router.pathname.includes("applyFDCM"))
       return;
 
-    if (!user.email) {
+    if (!user.email  || router.pathname === '/') {
       if (status === "loading") setLoading(true);
       if (status === "unauthenticated") {
         setLoading(false);
