@@ -9,8 +9,7 @@ const pool = new Pool({
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
-      const { id, student_id, name, course_id, grade, links, email_id, course_ic } = req.body;
-
+      const { student_id, name, course_id, grade, links, email_id, course_ic } = req.body;
       const client = await pool.connect();
 
       const checkEmailExistsQuery = `
@@ -18,10 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         FROM user_details
         WHERE email_id = $1
       `;
-
       const checkEmailExistsResult = await client.query(checkEmailExistsQuery, [email_id]);
-      let isUnauthorized = false;
 
+      let isUnauthorized = false;
       if (checkEmailExistsResult.rows.length > 0) {
         if (checkEmailExistsResult.rows[0].role !== 'STUDENT') {
           isUnauthorized = true;
@@ -33,25 +31,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(403).json({ message: 'Unauthorized submission' });
       }
 
-      let query;
-      let values;
-
-      if (id) {
-        query = `
-          UPDATE form_details
-          SET student_id = $2, name = $3, course_id = $4, grade = $5, links = $6, email_id = $7, course_ic = $8
-          WHERE id = $1;
-        `;
-        values = [id, student_id, name, course_id, grade, links, email_id, course_ic];
-      } else {
-        const newId = uuidv4();
-
-        query = `
-          INSERT INTO form_details (id, student_id, name, course_id, grade, links, email_id, course_ic)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
-        `;
-        values = [newId, student_id, name, course_id, grade, links, email_id, course_ic];
-      }
+      const newId = uuidv4();
+      const query = `
+        INSERT INTO form_details (id, student_id, name, course_id, grade, links, email_id, course_ic)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+      `;
+      const values = [newId, student_id, name, course_id, grade, links, email_id, course_ic];
 
       await client.query(query, values);
       client.release();
