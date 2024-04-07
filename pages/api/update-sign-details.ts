@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (checkResult.rows.length > 0 && checkResult.rows[0].signed_status) {
         client.release();
-        return res.status(200).json({ message: 'Already signed' });
+        return res.status(200).json({ message: 'Already Signed' });
       }
 
       const updateQuery = `
