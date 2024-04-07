@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Accordion from "@/components/Accordion";
 import DTButton from "@/components/DTButton";
 import { signOut } from "next-auth/react";
@@ -14,7 +14,7 @@ export default function AppliedStudentsPage() {
   const [loading, setLoading] = useState(false);
   const { user } = useGlobalContext();
 
-  const getFdcmDetails = async () => {
+  const getFdcmDetails = useCallback(async () => {
     setLoading(true);
     fetch("/api/fetch-fdcm-details", {
       method: "GET",
@@ -34,11 +34,11 @@ export default function AppliedStudentsPage() {
         toast.error("Unable to fetch your details!");
         setLoading(false);
       });
-  };
+  }, [user.email]);
 
   useEffect(() => {
     getFdcmDetails();
-  }, []);
+  }, [getFdcmDetails]);
 
   const makeCertificate = async () => {
     console.log(user.name, "CS F121");
