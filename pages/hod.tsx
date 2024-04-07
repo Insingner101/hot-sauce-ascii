@@ -51,15 +51,15 @@ export default function formEg() {
     getFdcmDetails();
   }, []);
 
-  const signStudent = async (email: string, course_id: string) => {
-    console.log(email, course_id);
+  const signStudent = async (id: string, course_id: string) => {
+    console.log(id, course_id);
     setLoading(true);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
-      student_id: "2021B5A42705G",
-      course_id: "CS F123",
+      student_id: id,
+      course_id: course_id,
     });
 
     const requestOptions = {
@@ -116,7 +116,7 @@ export default function formEg() {
                       return;
                     }
                     setSignStudentMail(student.email_id);
-                    signStudent(student.email_id, student.course_id);
+                    signStudent(student.student_id, student.course_id);
                   }}
                   className={`w-fit ${
                     student.signed_status ? "opacity-50" : "opacity-100"

@@ -1,6 +1,6 @@
-const { createCanvas, loadImage, registerFont } = require('canvas');
+import { createCanvas, loadImage, registerFont } from 'canvas';
 // const fs = require('fs');
-const { PDFDocument } = require('pdf-lib');
+import { PDFDocument } from 'pdf-lib';
 
 // Register font files
 registerFont('font/GreatVibes-Regular.ttf', { family: 'Great Vibes' });
@@ -12,7 +12,7 @@ const FONT_COLOR = "#FFFFFF";
 const COURSE_FONT_SIZE = 40;
 const SIGNATURE_PATH = "sign.png";
 
-async function makeCertificate(name, course) {
+export default async function makeCertificate(name, course) {
     // Create canvas
     const canvas = createCanvas(1200, 800);
     const ctx = canvas.getContext('2d');
@@ -66,6 +66,3 @@ async function canvasToPDF(canvas) {
     });
     return await pdfDoc.save();
 }
-
-// Export the makeCertificate function
-module.exports = { makeCertificate };
