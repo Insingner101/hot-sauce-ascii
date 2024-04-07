@@ -20,6 +20,11 @@ interface AppliedStudent {
   email_status: boolean;
 }
 
+interface GroupedStudents {
+  students: AppliedStudent[];
+  ic_mail: string;
+}
+
 export default function formEg() {
   const methods = useForm();
   const [students, setStudents] = useState<AppliedStudent[]>([]);
@@ -34,6 +39,30 @@ export default function formEg() {
       .catch((error) => console.error(error));
   }, []);
 
+  function groupByIC(students: AppliedStudent[]): GroupedStudents[] {
+    const groupedStudents: { [key: string]: GroupedStudents } = {};
+
+    for (const student of students) {
+      const { course_ic, ic, email_id } = student;
+
+      if (!groupedStudents[course_ic]) {
+        groupedStudents[course_ic] = {
+          students: [],
+          ic_mail: ic,
+        };
+      }
+
+      groupedStudents[course_ic].students.push(student);
+    }
+
+    return Object.values(groupedStudents);
+  }
+
+  const sendMail = async () => {
+    let mails = groupByIC((students));
+    console.log(mails)
+  };
+
   return (
     <div className="flex flex-col flex-1 items-center justify-start pt-10 pb-10 px-5 sm:px-16">
       <Head>
@@ -42,7 +71,9 @@ export default function formEg() {
       <div className="flex items-center justify-between w-full">
         <span className="text-black">Applied Students</span>
         <DTButton
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => {
+            sendMail();
+          }}
           className="py-2"
         >
           Email Faculty
@@ -100,7 +131,11 @@ export default function formEg() {
                     <p className="text-base font-medium leading-none text-black">
                       Links:
                     </p>
-                    <Link href={student.links} target="_blank" className="text-base leading-none text-muted-foreground text-[#0000EE]">
+                    <Link
+                      href={student.links}
+                      target="_blank"
+                      className="text-base leading-none text-muted-foreground text-[#0000EE]"
+                    >
                       Resume
                     </Link>
                   </div>
