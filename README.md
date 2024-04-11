@@ -1,7 +1,7 @@
 # hot-sauce-ascii
 Submission for hackenza
 ## Database Structure
-
+```
 -./
   - public
     - course_details
@@ -43,12 +43,14 @@ Submission for hackenza
       - email_id
       - role
       - id
-
+```
 ## Note
 
 - The id column in each table is a uuid for easy cross table linking and fetching of data.
 - the structure mentioned above is of the form:
+```
   -database
     -schema
       -table
         -table columns
+```
